@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}添加空格{% endblock %}
+{% block extrastyle %}
+    <script type="text/javascript">
+    $(document).ready(function(){
+        $("#testdata").click(function(){
+            $("#outText").empty();
+            teststring = $("#testText").val();
+            stringarray = [];
+            stringarray = teststring.split('');
+            $.ajax({
+                    type: "POST",
+                    cache: false,
+                    data: {teststring:teststring},
+                    async: false,
+                    url: "/addspace/convert/",
+                    success: function(data) {
+                        positions = data.position;
+                        for(var i=0;i<stringarray.length;i++)
+                        {
+                            $("#outText").append(teststring[i]);
+                            for(var j=0;j<positions.length;j++)
+                            {
+                                if(i==positions[j])
+                                {
+                                   $("#outText").append('<label style="color:red;">_</label>');
+                                }
+                            }
+                        }
+                    },
+                    error: function(data) {
+                        alert(data);
+                    }
+            });
+        //测试按钮结束
+        });
+
+        $("#convertdata").click(function(){
+            $("#outText").empty();
+            teststring = $("#testText").val();
+            $.ajax({
+                    type: "POST",
+                    cache: false,
+                    data: {teststring:teststring},
+                    async: false,
+                    url: "/addspace/convert/",
+                    success: function(data) {
+                        $("#outText").append(data.data);
+                    },
+                    error: function(data) {
+                        alert(data);
+                    }
+                });
+        //输出按钮结束
+        });
+
+    //document结束
+    });
+
+    </script>
+{% endblock %}
+{% block content %}
+<form role="form" style="padding:10px;" >
+    <div class="form-group">
+        <label for="name">测试文本</label>
+        <textarea class="form-control" rows="15" id="testText"></textarea>
+    </div>
+    <button type="button" class="btn btn-success" style="width:100px;margin:20px;" id="testdata">测试</button>
+    <button type="button" class="btn btn-success" style="width:100px;margin:20px;" id="convertdata">输出</button>
+
+</form>
+<div><label for="name" style="padding:10px;">下划线表示需要加空格</label></div>
+<label for="name" style="padding:10px;">输出文本</label>
+<div id="outText" style="padding:10px;">
+
+</div>
+{% endblock %}
